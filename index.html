@@ -400,37 +400,48 @@
         </ul>
       </div>
 
-      <!-- Formulario: arma un mensaje y lo abre en WhatsApp -->
-      <form class="contact-form" id="waForm" novalidate>
+      <!-- Formulario: se envía con Netlify Forms (llega al correo) o se abre en WhatsApp -->
+      <form class="contact-form" id="waForm" name="contacto" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+        <input type="hidden" name="form-name" value="contacto">
+        <p hidden><label>No llenar: <input name="bot-field"></label></p>
+
         <div class="field">
           <label for="nombre">Tu nombre</label>
-          <input id="nombre" name="nombre" type="text" autocomplete="name" placeholder="Ej. María González">
+          <input id="nombre" name="nombre" type="text" autocomplete="name" placeholder="Ej. María González" required>
         </div>
         <div class="field">
-          <label for="espacio">Tipo de espacio</label>
-          <select id="espacio" name="espacio">
-            <option>Hogar</option>
-            <option>Comercio</option>
-            <option>Proyecto u obra</option>
-          </select>
+          <label for="contacto">Email o teléfono</label>
+          <input id="contacto" name="contacto" type="text" autocomplete="email" placeholder="Para poder responderte" required>
         </div>
-        <div class="field">
-          <label for="servicio">¿Qué necesitas?</label>
-          <select id="servicio" name="servicio">
-            <option>Suministro e instalación</option>
-            <option>Solo suministro de luminarias</option>
-            <option>Asesoría para un proyecto</option>
-          </select>
+        <div class="field-row">
+          <div class="field">
+            <label for="espacio">Tipo de espacio</label>
+            <select id="espacio" name="espacio">
+              <option>Hogar</option>
+              <option>Comercio</option>
+              <option>Proyecto u obra</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="servicio">¿Qué necesitas?</label>
+            <select id="servicio" name="servicio">
+              <option>Suministro e instalación</option>
+              <option>Solo suministro de luminarias</option>
+              <option>Asesoría para un proyecto</option>
+            </select>
+          </div>
         </div>
         <div class="field">
           <label for="mensaje">Detalles (opcional)</label>
           <textarea id="mensaje" name="mensaje" rows="3" placeholder="Ej. Quiero cambiar la luz de la sala y poner tiras LED en la cocina."></textarea>
         </div>
+
         <div class="form-actions">
+          <button type="submit" id="formSend" class="btn btn-dark">Enviar mensaje</button>
           <a id="waSend" class="btn btn-wa" href="https://wa.me/584241782227" target="_blank" rel="noopener">Enviar por WhatsApp</a>
-          <a id="mailSend" class="btn btn-ghost" href="mailto:iluminateve@gmail.com">Enviar por email</a>
         </div>
-        <p class="form-note">Se abrirá WhatsApp o tu correo con el mensaje ya escrito. Solo tienes que enviarlo.</p>
+        <p class="form-status" id="formStatus" role="status" hidden></p>
+        <p class="form-note">"Enviar mensaje" nos llega por correo y te respondemos al email o teléfono que indiques. "Enviar por WhatsApp" abre el chat con tu mensaje ya escrito.</p>
       </form>
     </div>
   </section>
