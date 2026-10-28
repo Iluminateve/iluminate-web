@@ -49,10 +49,13 @@ if (slider) {
   updateLight();
 }
 
-// ---------- 2. Formulario: arma el mensaje para WhatsApp y email ----------
+// ---------- 2. Formulario de contacto ----------
+// "Enviar mensaje" lo recibe Netlify Forms y lo reenvía al correo de la empresa.
+// "Enviar por WhatsApp" arma el mismo mensaje y abre el chat.
 const form = document.getElementById("waForm");
 const waSend = document.getElementById("waSend");
-const mailSend = document.getElementById("mailSend");
+const formSend = document.getElementById("formSend");
+const formStatus = document.getElementById("formStatus");
 
 function buildMessage() {
   const nombre = form.nombre.value.trim();
@@ -67,17 +70,47 @@ function buildMessage() {
   return texto;
 }
 
-function updateLinks() {
-  const texto = buildMessage();
-  waSend.href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(texto)}`;
-  const asunto = `Solicitud de cotización - ${form.espacio.value}`;
-  mailSend.href = `mailto:${EMAIL}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(texto)}`;
+function updateWhatsApp() {
+  waSend.href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(buildMessage())}`;
+}
+
+function showStatus(text, ok) {
+  formStatus.textContent = text;
+  formStatus.className = "form-status " + (ok ? "is-ok" : "is-error");
+  formStatus.hidden = false;
+}
+
+async function sendForm(e) {
+  e.preventDefault();
+  if (!form.nombre.value.trim() || !form.contacto.value.trim()) {
+    showStatus("Escribe tu nombre y un email o teléfono para poder responderte.", false);
+    (form.nombre.value.trim() ? form.contacto : form.nombre).focus();
+    return;
+  }
+  formSend.disabled = true;
+  formSend.textContent = "Enviando…";
+  try {
+    const res = await fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(new FormData(form)).toString(),
+    });
+    if (!res.ok) throw new Error(res.status);
+    form.reset();
+    updateWhatsApp();
+    showStatus("¡Gracias! Recibimos tu mensaje y te responderemos pronto.", true);
+  } catch {
+    showStatus(`No se pudo enviar. Escríbenos por WhatsApp o a ${EMAIL}.`, false);
+  } finally {
+    formSend.disabled = false;
+    formSend.textContent = "Enviar mensaje";
+  }
 }
 
 if (form) {
-  form.addEventListener("input", updateLinks);
-  form.addEventListener("submit", (e) => e.preventDefault());
-  updateLinks();
+  form.addEventListener("input", updateWhatsApp);
+  form.addEventListener("submit", sendForm);
+  updateWhatsApp();
 }
 
 // ---------- 3. Botón "Copiar" del email ----------
