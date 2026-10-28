@@ -250,7 +250,15 @@ body::before {
 }
 .field textarea { resize: vertical; }
 .form-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.btn-dark { background: var(--ink); color: var(--bg); cursor: pointer; font-family: inherit; }
+.btn-dark:disabled { opacity: .6; cursor: wait; }
+.form-status { font-weight: 600; padding: .7em .9em; border-radius: 10px; }
+.form-status.is-ok { background: color-mix(in srgb, var(--wa) 14%, transparent); color: var(--ink); }
+.form-status.is-error { background: color-mix(in srgb, #d0422b 14%, transparent); color: var(--ink); }
+@media (max-width: 560px) { .field-row { grid-template-columns: 1fr; } }
 .form-note { font-size: .85rem; color: var(--muted); }
+.form-note a { color: var(--ink); font-weight: 600; text-decoration-color: var(--amber); }
 
 /* Pie */
 .site-footer { border-top: 1px solid var(--line); }
